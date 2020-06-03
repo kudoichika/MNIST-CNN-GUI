@@ -16,15 +16,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    handwriter.cpp \
+    Handwriter/handwriter.cpp \
     main.cpp \
-    mainwindow.cpp \
-    neuralnetwork.cpp
+    Interface/mainwindow.cpp \
+    Net/neuralnetwork.cpp
 
 HEADERS += \
-    handwriter.h \
-    mainwindow.h \
-    neuralnetwork.h
+    Handwriter/handwriter.h \
+    Interface/mainwindow.h \
+    Net/neuralnetwork.h
 
 INCLUDEPATH += /usr/local/Cellar/armadillo/9.870.2/include/
 LIBS += -L/usr/local/Cellar/armadillo/9.870.2/lib/ -larmadillo
