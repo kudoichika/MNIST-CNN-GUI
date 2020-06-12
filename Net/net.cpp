@@ -77,8 +77,8 @@ void Net::loadTestData() {
 //Export for the use of the GUI Interface
 //each layer parameter has its own file
 void Net::exportParams() {
-  	for (int i = 0; i < hidden; i++) {
-    	Theta[i].save(loc + paramFile + std::to_string(i));
+  	for (int i = 0; i < hidden + 1; i++) {
+    	Theta[i].save(loc + paramFile + std::to_string(i) + ".csv", arma::csv_ascii);
 		std::cout << "Exporting Theta " + std::to_string(i) << std::endl;
   	}
 	std::cout << "Competed Exporting All Parameters" << std::endl;
@@ -119,44 +119,75 @@ arma::mat Net::dsigmoid(arma::mat& z) {
 //Forward Propogation, Cost Calculation and Back Propogation
 //done simulatenously
 std::vector<arma::mat> Net::propogation(std::pair<int, int> data, double& cost) {
-	double m = data.second - data.first;
+	double m = data.second - data.first + 1;
 	//Forward Prop
 	std::vector<arma::mat> Transforms;
 	arma::mat Activated;
 	Activated = X.rows(data.first, data.second);
-	Transforms.push_back(arma::join_horiz(arma::ones(Activated.n_rows, 1), Activated));
-	for (int i = 0; i < hidden; i++) {
+	Transforms.push_back(Activated);
+	for (int i = 0; i < hidden + 1; i++) {
+		//std::cout << Activated.n_rows << " x " << Activated.n_cols << std::endl;
 		Transforms.push_back(arma::join_horiz(arma::ones(Activated.n_rows, 1), Activated)
 					* Theta[i].t());
 		Activated = sigmoid(Transforms[i+1]);
 	}
+	//std::cout << Activated.n_rows << " x " << Activated.n_cols << std::endl;
 	arma::mat Out = Activated;
+	//std::cout << "Forward Propogation Completed" << std::endl;
 	//Cost Calculation
-	cost = (-1/m) * accu(Y.rows(data.first, data.second) * log(Out)
-			+ (1 - Y.rows(data.first, data.second)) * log(1 - Out));
+	cost = (-1/m) * accu(Y.rows(data.first, data.second) % log(Out)
+			+ (1 - Y.rows(data.first, data.second)) % log(1 - Out));
 	//Regularized Cost
 	for (int i = 0; i < hidden + 1; i++) {
 		cost += (lambda/(2*m))
 				* accu(square(Theta[i].cols(1, Theta[i].n_cols-1)));
 	}
+	//std::cout << "Cost Calculation Completed" << std::endl;
+
+	//Listing Stuff
+	/*std::cout << "Listing Theta" << std::endl;
+	int idx = 0;
+	for (auto& t : Theta)
+	std::cout << (idx++) << "| " << t.n_rows << " x " << t.n_cols << std::endl;
+	std::cout << "Listing Transforms" << std::endl;
+	idx = 0;
+	for (auto& t : Transforms)
+	std::cout << (idx++) << "| " << t.n_rows << " x " << t.n_cols << std::endl;*/
+
 	//Back Prop
 	std::vector<arma::mat> E; //Error Deltas
 	E.push_back(Out - Y.rows(data.first, data.second));
 	for (int i = 0; i < hidden; i++) {
-		arma::mat T = Transforms[hidden - i].cols(1, E[i].n_cols-1);
-		E.push_back((E[i].t() * Theta[hidden - i]) % arma::join_horiz(arma::ones(m, 1),
+		arma::mat T = Transforms[hidden - i];
+		E.push_back((E[i] * Theta[hidden - i]) % arma::join_horiz(arma::ones(m, 1),
 					dsigmoid(T)));
 	}
+	//std::cout << "Error Calculation Completed" << std::endl;
+
+	/*std::cout << "Listing Errors" << std::endl;
+	idx = 0;
+	for (auto& t : E)
+	std::cout << (idx++) << "| " << t.n_rows << " x " << t.n_cols << std::endl;*/
+
 	//Error Accumulation var E -> partial change of parameters
-	E[0] = E[0].t() % Transforms[hidden];
-	for (int i = 1; i < hidden; i++) {
-		E[i] = (1/m) * E[i].cols(1, E[i].n_cols-1).t() * Transforms[hidden - i];
+	E[0] = E[0].t() * arma::join_horiz(arma::ones(m, 1), Transforms[hidden]);
+	for (int i = 1; i < hidden + 1; i++) {
+		E[i] = (1/m) * E[i].cols(1, E[i].n_cols-1).t()
+				* arma::join_horiz(arma::ones(m, 1), Transforms[hidden - i]);
 	}
+	//std::cout << "Error Accumulation Completed" << std::endl;
+
+	/*std::cout << "Listing Errors" << std::endl;
+	idx = 0;
+	for (auto& t : E)
+	std::cout << (idx++) << "| " << t.n_rows << " x " << t.n_cols << std::endl;*/
+
 	//Regularized Change
 	for (int i = 0; i < hidden + 1; i++) {
 		E[i].cols(1, E[i].n_cols-1) += (lambda/m)
 			* Theta[hidden - i].cols(1, Theta[hidden - i].n_cols-1);
 	}
+	//std::cout << "Regularization of Gradient Completed" << std::endl;
 	return E;
 }
 
@@ -173,7 +204,7 @@ arma::mat Net::compute(arma::mat& query) {
 //Simultaenous Update for parameters
 void Net::update(std::vector<arma::mat>& change) {
 	for (int i = 0; i < hidden + 1; i++) {
-		Theta[i] -= alpha * change[i];
+		Theta[hidden - i] -= alpha * change[i];
 	}
 }
 

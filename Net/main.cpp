@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include <armadillo>
 
 #include "parse.cpp"
@@ -19,9 +20,15 @@ void parseTestData() {
 	clearMemory();
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+	//parseTrainData();
 	Net net;
 	net.loadTrainData();
-	net.train(make_pair(0, 10), 0.1, 10, 0);
+	net.train(make_pair(0, 10000),
+				atof(argv[1]),
+				atoll(argv[2]),
+				atof(argv[3])
+			);
+	net.exportParams();
 	return 0;
 }

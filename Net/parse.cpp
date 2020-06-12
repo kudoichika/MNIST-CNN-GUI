@@ -15,7 +15,7 @@ arma::mat Features;
 arma::mat Values;
 arma::mat TestFeatures;
 arma::mat TestValues;
-int limit = 0;
+int limit = 10100;
 
 //Reverse an Integer
 int rev(int val) {
