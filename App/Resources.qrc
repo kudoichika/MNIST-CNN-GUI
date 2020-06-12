@@ -1,0 +1,6 @@
+<RCC>
+    <qresource>
+        <file>Data/train-images-idx3-ubyte</file>
+        <file>Data/train-labels-idx1-ubyte</file>
+    </qresource>
+</RCC>
