@@ -1,3 +1,6 @@
+#Large Data Matrix Files
+*.csv
+
 # C++ objects and libs
 *.slo
 *.lo
