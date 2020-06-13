@@ -27,7 +27,7 @@ private:
 	void update(std::vector<arma::mat>& change);
 	arma::mat sigmoid(arma::mat& z);
 	arma::mat dsigmoid(arma::mat& z);
-	std::vector<arma::mat> propogation(std::pair<int, int> data, double& cost);
+	std::vector<arma::mat> propogation(std::pair<int, int> data, double& cost, double& score);
 	arma::mat compute(arma::mat& query);
 	arma::mat fastCSVReader(std::string file);
 public:
@@ -87,20 +87,26 @@ void Net::exportParams() {
 //Reset params to match the number of hidden layers before
 //each time training is done using random initialization
 void Net::resetParams() {
+	arma::arma_rng::set_seed_random();
 	Theta.clear();
 	arma::mat T;
+	double epsilon = sqrt(6)/ sqrt(785 + neurons);
 	T.randu(neurons, 785);
-	T = (T - 0.5) / 4.0;
+	T = T * 2 * epsilon -  epsilon;
 	Theta.push_back(T);
+	epsilon = sqrt(6)/ sqrt(2 * neurons + 1);
 	for (int i = 0; i < hidden - 1; i++) {
 		T.randu(neurons, neurons+1);
-		T = (T - 0.5) / 4.0;
+		T = T * 2 * epsilon - epsilon;
 		Theta.push_back(T);
 	}
+	epsilon = sqrt(6)/ sqrt(neurons + 11);
 	T.randu(10, neurons+1);
-	T = (T - 0.5) / 4.0;
+	T = T * 2 * epsilon - epsilon;
 	Theta.push_back(T);
 	std::cout << "Completed Random Initialization of Parameters" << std::endl;
+	Theta[0].save(loc + "initTheta0.csv", arma::csv_ascii);
+	Theta[1].save(loc + "initTheta1.csv", arma::csv_ascii);
 }
 
 //Sigmoid function
@@ -118,7 +124,7 @@ arma::mat Net::dsigmoid(arma::mat& z) {
 
 //Forward Propogation, Cost Calculation and Back Propogation
 //done simulatenously
-std::vector<arma::mat> Net::propogation(std::pair<int, int> data, double& cost) {
+std::vector<arma::mat> Net::propogation(std::pair<int, int> data, double& cost, double& score) {
 	double m = data.second - data.first + 1;
 	//Forward Prop
 	std::vector<arma::mat> Transforms;
@@ -133,6 +139,10 @@ std::vector<arma::mat> Net::propogation(std::pair<int, int> data, double& cost) 
 	}
 	//std::cout << Activated.n_rows << " x " << Activated.n_cols << std::endl;
 	arma::mat Out = Activated;
+	//std::cout << arma::index_max(Out) << std::endl;
+	arma::umat Check = (arma::index_max(Out, 1)
+				== arma::index_max(Y.rows(data.first, data.second), 1));
+	score = accu(Check)/m;
 	//std::cout << "Forward Propogation Completed" << std::endl;
 	//Cost Calculation
 	cost = (-1/m) * accu(Y.rows(data.first, data.second) % log(Out)
@@ -155,12 +165,16 @@ std::vector<arma::mat> Net::propogation(std::pair<int, int> data, double& cost) 
 	std::cout << (idx++) << "| " << t.n_rows << " x " << t.n_cols << std::endl;*/
 
 	//Back Prop
+	//idx = 0; std::cout << "Listing Error Deltas" << std::endl;
 	std::vector<arma::mat> E; //Error Deltas
 	E.push_back(Out - Y.rows(data.first, data.second));
+	//std::cout << (idx++) << "| " << E[0].n_rows << " x " << E[0].n_cols << std::endl;
 	for (int i = 0; i < hidden; i++) {
 		arma::mat T = Transforms[hidden - i];
 		E.push_back((E[i] * Theta[hidden - i]) % arma::join_horiz(arma::ones(m, 1),
 					dsigmoid(T)));
+		E[i+1] = E[i+1].cols(1, E[i+1].n_cols - 1);
+		//std::cout << (idx++) << "| " << E[i+1].n_rows << " x " << E[i+1].n_cols << std::endl;
 	}
 	//std::cout << "Error Calculation Completed" << std::endl;
 
@@ -172,7 +186,7 @@ std::vector<arma::mat> Net::propogation(std::pair<int, int> data, double& cost) 
 	//Error Accumulation var E -> partial change of parameters
 	E[0] = E[0].t() * arma::join_horiz(arma::ones(m, 1), Transforms[hidden]);
 	for (int i = 1; i < hidden + 1; i++) {
-		E[i] = (1/m) * E[i].cols(1, E[i].n_cols-1).t()
+		E[i] = (1/m) * E[i].t()
 				* arma::join_horiz(arma::ones(m, 1), Transforms[hidden - i]);
 	}
 	//std::cout << "Error Accumulation Completed" << std::endl;
@@ -216,12 +230,14 @@ void Net::train(std::pair<int, int> data, double alpha, long long iter, double l
 	this->lambda = lambda;
 	resetParams();
 	double cost = 0;
+	double score = 0;
 	//Batch Gradient Descent
 	std::cout << "Starting Batch Gradient Descent with " << iter << " iterations" << std::endl;
 	for (long long i = 0; i < iter; i++) {
-		std::vector<arma::mat> change = propogation(data, cost);
+		std::vector<arma::mat> change = propogation(data, cost, score);
 		update(change);
-		std::cout << "Iteration " << i << " Cost J = " << cost << std::endl;
+		std::cout << "Iteration " << i << " Cost J = " << cost;
+		std::cout << " | Score = " << score * 100 << std::endl;
 	}
 	std::cout << "Completed Batch Gradient Descent with Cost " << cost << std::endl;
 }

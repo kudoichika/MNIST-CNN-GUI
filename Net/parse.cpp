@@ -5,8 +5,8 @@ const std::string trainImgs = "train-images-idx3-ubyte";
 const std::string trainLbls = "train-labels-idx1-ubyte";
 const std::string parsedTrainImgs = "train-img.csv";
 const std::string parsedTrainLbls = "train-lbl.csv";
-const std::string testImgs = "";
-const std::string testLbls = "";
+const std::string testImgs = "t10k-images-idx3-ubyte";
+const std::string testLbls = "t10k-labels-idx1-ubyte";
 const std::string parsedTestImgs = "test-img.csv";
 const std::string parsedTestLbls = "test-lbl.csv";
 

@@ -21,13 +21,15 @@ void parseTestData() {
 }
 
 int main(int argc, char *argv[]) {
+	//parseTestData();
 	//parseTrainData();
-	Net net;
+	//parseNumberTrainLabel();
+	Net net(atoi(argv[1]), atoi(argv[2]));
 	net.loadTrainData();
 	net.train(make_pair(0, 10000),
-				atof(argv[1]),
-				atoll(argv[2]),
-				atof(argv[3])
+				atof(argv[3]),
+				atoll(argv[4]),
+				atof(argv[5])
 			);
 	net.exportParams();
 	return 0;
