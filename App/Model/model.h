@@ -16,6 +16,13 @@ public:
 private:
     MainWindow* parent;
     QString queryFilePath;
+
+    const int hiddenLayers = 1;
+
+    void loadParameters();
+    void compute();
+    vector<arma::mat> params;
+    arma::mat Model::fastCSVReader(std::string file)
 };
 
 #endif // MODEL_H
