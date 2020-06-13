@@ -1,14 +1,25 @@
+function script(choice, layers)
+
 fprintf("\n\nLoading Data....\n");
 
-load('train-img.csv'); % Data to Evaluate On
-load('train-lbl.csv'); % Labes for the Data
+if (strcmp(choice,'train')) 
+	load('train-img.csv');
+	load('train-lbl.csv');
+	X = train_img;
+	y = train_lbl;
+else
+	load('test-img.csv');
+	load('test-lbl.csv');
+	X = test_img;
+	y = test_lbl;
+end
+
 
 fprintf("Finished Loading Data\n");
 fprintf("Loading Parameters...\n");
 
 %Load the Number of hidden layer params
-
-n_hidden = 1;
+n_hidden = layers;
 
 thetas = {};
 
@@ -18,8 +29,7 @@ end
 
 fprintf("Finished Loading Parameters.\n");
 
-X = train_img;
-y = train_lbl;
+
 
 m = length(y);
 
@@ -32,12 +42,16 @@ endfunction
 prediction = X;
 
 for i = 1:n_hidden+1
+	%Octave only = [struct2cell(S){:}]
 	prediction = sigmoid([ones(m, 1), prediction] * thetas{1,i}');
 end
 
 [dummy, p] = max(prediction, [], 2);
 [dummy, a] = max(y, [], 2);
+%Octave only: a -= 1;
 eval = sum(a == p);
 score = eval/length(y);
 
 fprintf("Finished Evalation. Score = %f\n", score);
+
+end
