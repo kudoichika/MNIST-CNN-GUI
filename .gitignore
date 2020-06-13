@@ -1,6 +1,9 @@
 #Large Data Matrix Files
 *.csv
 
+#Octave Workspace
+octave-workspace
+
 # C++ objects and libs
 *.slo
 *.lo
