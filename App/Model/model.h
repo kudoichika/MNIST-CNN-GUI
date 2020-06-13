@@ -21,8 +21,9 @@ private:
 
     void loadParameters();
     void compute();
-    vector<arma::mat> params;
-    arma::mat Model::fastCSVReader(std::string file)
+    arma::mat sigmoid(arma::mat& z);
+    std::vector<arma::mat> params;
+    arma::mat fastCSVReader(std::string file);
 };
 
 #endif // MODEL_H

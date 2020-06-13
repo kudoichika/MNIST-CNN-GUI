@@ -1,5 +1,6 @@
 #Large Data Matrix Files
 *.csv
+#!App/theta*.csv
 
 #Octave Workspace
 octave-workspace

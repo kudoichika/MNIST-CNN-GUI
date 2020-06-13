@@ -9,14 +9,17 @@ Model::Model(MainWindow* parent) {
     queryFilePath = QApplication::applicationDirPath() + "/query.pgm";
 }
 
-arma::mat sigmoid(arma::mat& z) {
+arma::mat Model::sigmoid(arma::mat& z) {
     return (1 / (1 + exp(-z)));
 }
 
 void Model::loadParameters() {
     params.clear();
-    for (int i = 0; i < hiddenLayers; i++) {
-        params.push_back(fastCSVReader(""));
+    for (int i = 0; i <= hiddenLayers; i++) {
+        QTemporaryDir tempDir;
+        QString path = QString::fromStdString("/theta" + std::to_string(i) + ".csv");
+        QFile::copy(":/Params" + path, tempDir.path() + path);
+        params.push_back(fastCSVReader((tempDir.path() + path).toUtf8().toStdString()));
     }
 }
 
@@ -28,13 +31,17 @@ void Model::query() {
 void Model::compute() {
     arma::mat que;
     que.load(queryFilePath.toUtf8().constData(), arma::pgm_binary);
-    que.resize(1, 784);
+    ((arma::mat)reshape(que, 1, 784)).save("check.csv", arma::csv_ascii);
     que /= 255.0;
-    for (int i = 0; i < hiddenLayers; i++) {
-        que = sigmoid(arma::join_horiz(arma::ones(1, 1), que) * params[i]);
+    que -= 0.5;
+    que = reshape(que, 1, 784);
+    for (int i = 0; i <= hiddenLayers; i++) {
+        que = arma::join_horiz(arma::ones(1, 1), que) * params[i].t();
+        que = sigmoid(que);
     }
-    int res = accu(index_max(que));
-    parent->setLabel(QString(res));
+    std::cout << que << std::endl;
+    int res = accu(index_max(que, 1));
+    parent->setLabel(QString::number(res));
 }
 
 arma::mat Model::fastCSVReader(std::string file) {

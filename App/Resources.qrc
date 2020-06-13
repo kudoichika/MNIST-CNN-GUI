@@ -1,2 +1,6 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<RCC>
+    <qresource prefix="/Params">
+        <file>theta0.csv</file>
+        <file>theta1.csv</file>
+    </qresource>
+</RCC>

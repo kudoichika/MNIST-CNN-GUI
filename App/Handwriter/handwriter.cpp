@@ -23,8 +23,10 @@ void Handwriter::clearImage() {
 void Handwriter::saveImage() {
     if (modified) {
         QImage resizedImage = image->scaled(28, 28, Qt::KeepAspectRatio);
-        resizedImage.invertPixels();
-        resizedImage.save(QString("Query.pgm"), "PGM");
+        QTransform transform;
+        transform.rotate(90);
+        resizedImage = resizedImage.transformed(transform);
+        resizedImage.mirrored(true, false).save(QString("query.pgm"), "PGM");
     }
 }
 
@@ -56,7 +58,7 @@ void Handwriter::paintEvent(QPaintEvent *event) {
 
 void Handwriter::drawLineTo(const QPoint& endPoint) {
     QPainter painter(image);
-    painter.setPen(QPen(Qt::white, 10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.setPen(QPen(Qt::white, 30, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter.drawLine(lastPoint, endPoint);
     modified = true;
     update();
