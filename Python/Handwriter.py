@@ -26,7 +26,7 @@ class Handwriter(QWidget):
     def saveImage(self):
         if self.modified:
             resizedImage = self.image.scaled(28, 28, Qt.KeepAspectRatio)
-            resizedImage.save("query.pgm", "PGM")
+            resizedImage.save('query.pgm', 'PGM')
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

@@ -17,8 +17,8 @@ class MainWindow(QWidget):
 
         self.handwriter = Handwriter()
         self.model = Model(self)
-        self.clearButton = QPushButton("Clear")
-        self.doneButton = QPushButton("Interpret")
+        self.clearButton = QPushButton('Clear')
+        self.doneButton = QPushButton('Interpret')
 
         #QtWidget.connect(clearButton, Signal("clicked()"), self.handwriter, SLOT("clearImage()"))
         #QtWidget.connect(doneButton, SIGNAL("clicked()"), self.handwriter, SLOT("saveImage()"))
@@ -35,9 +35,9 @@ class MainWindow(QWidget):
         leftLayout.addLayout(actionLayout)
 
         rightLayout = QVBoxLayout()
-        self.label = QLabel("Draw\n and Try")
+        self.label = QLabel('Draw\n and Try')
         self.label.setAlignment(Qt.AlignHCenter)
-        self.label.setStyleSheet("*{color:#5A95B3;font-size:30px;font-weight:bold;}")
+        self.label.setStyleSheet('*{color:#5A95B3;font-size:30px;font-weight:bold;}')
         rightLayout.addSpacerItem(QSpacerItem(0, 50, QSizePolicy.Minimum, QSizePolicy.Minimum))
         rightLayout.addWidget(self.label)
         rightLayout.setAlignment(Qt.AlignHCenter)
