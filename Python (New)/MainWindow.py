@@ -42,7 +42,7 @@ class MainWindow(QWidget):
         self.stats = QLabel('Accuracy: -%')
         self.stats.setAlignment(Qt.AlignHCenter)
         self.stats.setStyleSheet('*{font-size:20px;font-weight:bold;}')
-        self.wrongButton = QPushButton('Report Error')
+        self.wrongButton = QPushButton('Report Wrong')
         self.correctButton = QPushButton('Report Accurate')
         rightLayout.addSpacerItem(QSpacerItem(0, 50, QSizePolicy.Minimum, QSizePolicy.Minimum))
         rightLayout.addWidget(self.label)
@@ -68,7 +68,7 @@ class MainWindow(QWidget):
                 if len(lines):
                    self.correct = int(lines[0])
                    self.wrong = int(lines[1])
-                   self.updateAcc
+                   self.updateAcc()
 
         self.setLayout(layout)
         self.setFixedSize(600, 350)
@@ -82,8 +82,9 @@ class MainWindow(QWidget):
         self.updateAcc()
 
     def updateAcc(self):
-        acc = round(self.correct / (self.correct + self.wrong), 2)
-        self.stats.setText('Accuracy: '+str(acc)+'%')
+        acc = round((self.correct*100) / (self.correct + self.wrong), 2)
+        print(self.correct, self.wrong, acc)
+        self.stats.setText('Overall Accuracy: '+str(acc)+'%')
 
     def setLabel(self, text):
         self.label.setText(text)
