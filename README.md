@@ -7,6 +7,5 @@ ML Model Training Details/Step can be found on my [Kaggle Collection](https://gi
 ### Demo
 ![demo](https://github.com/kudoichika/NumberRecognizer/blob/master/small-demo.gif?raw=true)
 
-###Older Version
-
+### Older Version
 The old C++ version uses the Armadillo linear algebra library and a DNN algorithm with a much lower accuracy.
