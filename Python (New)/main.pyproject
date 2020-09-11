@@ -1,0 +1,3 @@
+{
+    "files": ["main.py","Handwriter.py","MainWindow.py","Model.py", "CNN/learn.py", "CNN/model.h5"]
+}
