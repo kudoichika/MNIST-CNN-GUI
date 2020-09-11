@@ -6,6 +6,7 @@ from Handwriter import Handwriter
 from Model import Model
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout
 from PyQt5.QtWidgets import QSizePolicy, QLabel, QSpacerItem
@@ -20,9 +21,6 @@ class MainWindow(QWidget):
         self.clearButton = QPushButton('Clear')
         self.doneButton = QPushButton('Interpret')
 
-        #QtWidget.connect(clearButton, Signal("clicked()"), self.handwriter, SLOT("clearImage()"))
-        #QtWidget.connect(doneButton, SIGNAL("clicked()"), self.handwriter, SLOT("saveImage()"))
-        #
         self.clearButton.clicked.connect(self.handwriter.clearImage)
         self.doneButton.clicked.connect(self.imageRecognition)
 
@@ -38,8 +36,17 @@ class MainWindow(QWidget):
         self.label = QLabel('Draw\n and I\'ll Guess!')
         self.label.setAlignment(Qt.AlignHCenter)
         self.label.setStyleSheet('*{color:#5A95B3;font-size:30px;font-weight:bold;}')
+        self.stats = QLabel('Accuracy: 100%')
+        self.stats.setAlignment(Qt.AlignHCenter)
+        self.stats.setStyleSheet('*{font-size:20px;font-weight:bold;}')
+        self.wrongButton = QPushButton('Report Error')
+        self.correctButton = QPushButton('Report Accurate')
         rightLayout.addSpacerItem(QSpacerItem(0, 50, QSizePolicy.Minimum, QSizePolicy.Minimum))
         rightLayout.addWidget(self.label)
+        rightLayout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Minimum))
+        rightLayout.addWidget(self.stats)
+        rightLayout.addWidget(self.wrongButton)
+        rightLayout.addWidget(self.correctButton)
         rightLayout.setAlignment(Qt.AlignHCenter)
 
         layout = QHBoxLayout()
