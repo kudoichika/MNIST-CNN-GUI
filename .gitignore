@@ -1,5 +1,7 @@
+
 # User
 *.user
+*.txt
 
 # Byte-compiled / optimized / DLL files
 *query.pgm*
