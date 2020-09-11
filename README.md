@@ -4,5 +4,7 @@ A very simple Qt/Python GUI to physically test my MNIST Digit Recognition CNN al
 
 The old C++ version uses the Armadillo linear algebra library and a DNN algorithm with a much lower accuracy.
 
+ML Model Training Details/Step can be found on my [Kaggle Collection](https://github.com/kudoichika/Kaggle-Collection) 
+
 ### Demo
 ![demo](https://github.com/kudoichika/NumberRecognizer/blob/master/small-demo.gif?raw=true)
