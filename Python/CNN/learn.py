@@ -4,7 +4,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 din = ''
-dout = '../'
+dout = ''
 
 train = pd.read_csv(din + 'train.csv')
 train = train.to_numpy()
