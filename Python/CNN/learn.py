@@ -49,7 +49,7 @@ def create_model(target_size, num_classes):
 CLASSES = 10
 SIZE = (28, 28)
 BATCH = 32
-EPOCHS = 30
+EPOCHS = 20 #10-30
 
 model = create_model(SIZE, CLASSES)
 
